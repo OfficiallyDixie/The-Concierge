@@ -317,6 +317,20 @@
             .concierge-path-card, .concierge-note-card, .concierge-ask-copy, .concierge-form-card { padding: 27px !important; }
         }
 
+
+        /* GitHub Pages visibility safeguard */
+        body.concierge-page {
+            opacity: 1 !important;
+            visibility: visible !important;
+        }
+
+        body.concierge-page #ne-master-wrapper,
+        body.concierge-page .concierge-page-wrap,
+        body.concierge-page main {
+            opacity: 1 !important;
+            visibility: visible !important;
+        }
+
 </style>
 
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>
@@ -1766,31 +1780,66 @@
 
 </div>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
     <script>
-        $(document).ready(function(){
-            $('body').addClass('is-loaded');
+        document.addEventListener('DOMContentLoaded', function() {
+            document.body.classList.add('is-loaded');
 
-            $('#menuToggle').on('click', function(e) {
-                e.stopPropagation();
-                $(this).toggleClass('open');
-                $('#mobileOverlay').toggleClass('active');
+            var menuToggle = document.getElementById('menuToggle');
+            var mobileOverlay = document.getElementById('mobileOverlay');
+
+            if (menuToggle && mobileOverlay) {
+                menuToggle.addEventListener('click', function(event) {
+                    event.stopPropagation();
+                    menuToggle.classList.toggle('open');
+                    mobileOverlay.classList.toggle('active');
+                });
+
+                mobileOverlay.querySelectorAll('a').forEach(function(link) {
+                    link.addEventListener('click', function() {
+                        mobileOverlay.classList.remove('active');
+                        menuToggle.classList.remove('open');
+                    });
+                });
+            }
+
+            document.querySelectorAll('[data-route-program]').forEach(function(button) {
+                button.addEventListener('click', function() {
+                    var program = button.getAttribute('data-route-program');
+                    var select = document.getElementById('programInterest');
+                    var ask = document.getElementById('ask');
+
+                    if (select) {
+                        select.value = program;
+                    }
+
+                    if (ask) {
+                        var y = ask.getBoundingClientRect().top + window.pageYOffset - 90;
+                        window.scrollTo({ top: y, behavior: 'smooth' });
+                    }
+                });
             });
 
-            $('.mobile-menu-overlay a').on('click', function() {
-                $('#mobileOverlay').removeClass('active');
-                $('#menuToggle').removeClass('open');
-            });
+            var footerForm = document.getElementById('footerNewsletterForm');
+            if (footerForm) {
+                footerForm.setAttribute('action', 'https://formsubmit.co/weare@authorityscale.com');
+                footerForm.setAttribute('method', 'POST');
+                footerForm.setAttribute('target', '_self');
 
-            $('[data-route-program]').on('click', function() {
-                const program = $(this).data('route-program');
-                $('#programInterest').val(program);
-                $('html, body').animate({
-                    scrollTop: $('#ask').offset().top - 90
-                }, 450);
-            });
+                footerForm.addEventListener('submit', function() {
+                    var nextField = footerForm.querySelector('input[name="_next"]');
+                    if (!nextField) {
+                        nextField = document.createElement('input');
+                        nextField.type = 'hidden';
+                        nextField.name = '_next';
+                        footerForm.appendChild(nextField);
+                    }
+                    nextField.value = 'https://officiallydixie.github.io/WeGotIt/';
+                });
+            }
         });
     </script>
+
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
